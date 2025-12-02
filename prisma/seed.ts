@@ -29,7 +29,7 @@ async function main() {
         avgComments: influencer.avgComments,
         topics: influencer.topics,
         location: influencer.location,
-        imageUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=${influencer.name}`,
+        imageUrl: `https://api.dicebear.com/9.x/adventurer/svg?seed=${influencer.name}`,
       },
     })
   }
