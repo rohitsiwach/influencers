@@ -35,7 +35,7 @@ export default async function RootLayout({
           <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
             <div className="flex items-center gap-8">
               <Link href="/" className="text-xl font-bold tracking-tight hover:opacity-80 transition-opacity">
-                Addfame
+                addfame
               </Link>
               {session?.user && (
                 <div className="hidden md:flex gap-6 text-sm font-medium text-gray-600">

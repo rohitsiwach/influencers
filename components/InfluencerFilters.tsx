@@ -1,11 +1,11 @@
 "use client"
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 
 interface FilterState {
   search: string
-  location: string
+  locations: string[]
   topics: string[]
-  platform: string
+  platforms: string[]
   minFollowers: number
 }
 
@@ -19,15 +19,77 @@ const AVAILABLE_TOPICS = [
   "Vegan", "Vlogs", "Wellness", "Woodworking", "Yoga", "Zero Waste"
 ];
 
+const AVAILABLE_LOCATIONS = [
+  "Berlin", "Munich", "Hamburg", "Cologne", "Frankfurt", "Stuttgart"
+];
+
+const AVAILABLE_PLATFORMS = [
+  "Instagram", "YouTube", "TikTok", "Twitch"
+];
+
+function MultiSelect({ label, options, selected, onChange }: { label: string, options: string[], selected: string[], onChange: (val: string[]) => void }) {
+  const [isOpen, setIsOpen] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  const toggleOption = (option: string) => {
+    const newSelected = selected.includes(option)
+      ? selected.filter(item => item !== option)
+      : [...selected, option]
+    onChange(newSelected)
+  }
+
+  return (
+    <div className="relative" ref={containerRef}>
+      <label className="block text-xs font-medium text-gray-500 mb-1">{label}</label>
+      <button 
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full px-3 py-2 text-left border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black bg-white flex justify-between items-center"
+      >
+        <span className="truncate text-sm block mr-2">
+          {selected.length === 0 ? 'All' : `${selected.length} selected`}
+        </span>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className={`w-4 h-4 flex-shrink-0 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}>
+          <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
+        </svg>
+      </button>
+      
+      {isOpen && (
+        <div className="absolute z-20 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+          {options.map(option => (
+            <label key={option} className="flex items-center px-3 py-2 hover:bg-gray-50 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={selected.includes(option)}
+                onChange={() => toggleOption(option)}
+                className="rounded border-gray-300 text-black focus:ring-black mr-2"
+              />
+              <span className="text-sm text-gray-700">{option}</span>
+            </label>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export function InfluencerFilters({ onFilterChange }: { onFilterChange: (filters: FilterState) => void }) {
   const [filters, setFilters] = useState<FilterState>({
     search: '',
-    location: '',
+    locations: [],
     topics: [],
-    platform: '',
+    platforms: [],
     minFollowers: 0,
   })
-  const [isTopicsExpanded, setIsTopicsExpanded] = useState(false);
 
   const updateFilter = (key: keyof FilterState, value: any) => {
     const newFilters = { ...filters, [key]: value }
@@ -35,18 +97,11 @@ export function InfluencerFilters({ onFilterChange }: { onFilterChange: (filters
     onFilterChange(newFilters)
   }
 
-  const toggleTopic = (topic: string) => {
-    const currentTopics = filters.topics;
-    const newTopics = currentTopics.includes(topic)
-      ? currentTopics.filter(t => t !== topic)
-      : [...currentTopics, topic];
-    updateFilter('topics', newTopics);
-  }
-
   return (
     <div className="bg-white rounded-xl border shadow-sm p-4 mb-8">
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
-        <div className="md:col-span-4">
+      <div className="flex flex-col gap-4">
+        {/* Search Bar - Full Width */}
+        <div className="w-full">
           <label className="block text-xs font-medium text-gray-500 mb-1">Search</label>
           <div className="relative">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
@@ -62,87 +117,53 @@ export function InfluencerFilters({ onFilterChange }: { onFilterChange: (filters
           </div>
         </div>
         
-        <div className="md:col-span-2">
-          <label className="block text-xs font-medium text-gray-500 mb-1">Location</label>
-          <select
-            value={filters.location}
-            onChange={(e) => updateFilter('location', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black bg-white"
-          >
-            <option value="">Anywhere</option>
-            <option value="Berlin">Berlin</option>
-            <option value="Munich">Munich</option>
-            <option value="Hamburg">Hamburg</option>
-            <option value="Cologne">Cologne</option>
-            <option value="Frankfurt">Frankfurt</option>
-            <option value="Stuttgart">Stuttgart</option>
-          </select>
-        </div>
-
-        <div className="md:col-span-2">
-          <label className="block text-xs font-medium text-gray-500 mb-1">Platform</label>
-          <select
-            value={filters.platform}
-            onChange={(e) => updateFilter('platform', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black bg-white"
-          >
-            <option value="">All Platforms</option>
-            <option value="Instagram">Instagram</option>
-            <option value="YouTube">YouTube</option>
-            <option value="TikTok">TikTok</option>
-            <option value="Twitch">Twitch</option>
-          </select>
-        </div>
-
-        <div className="md:col-span-2">
-          <label className="block text-xs font-medium text-gray-500 mb-1">Min. Followers</label>
-          <input
-            type="number"
-            placeholder="0"
-            value={filters.minFollowers || ''}
-            onChange={(e) => updateFilter('minFollowers', parseInt(e.target.value) || 0)}
-            className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black"
+        {/* Filters Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <MultiSelect 
+            label="Location" 
+            options={AVAILABLE_LOCATIONS} 
+            selected={filters.locations} 
+            onChange={(val) => updateFilter('locations', val)} 
           />
+
+          <MultiSelect 
+            label="Platform" 
+            options={AVAILABLE_PLATFORMS} 
+            selected={filters.platforms} 
+            onChange={(val) => updateFilter('platforms', val)} 
+          />
+
+          <MultiSelect 
+            label="Topics" 
+            options={AVAILABLE_TOPICS} 
+            selected={filters.topics} 
+            onChange={(val) => updateFilter('topics', val)} 
+          />
+
+          <div>
+            <label className="block text-xs font-medium text-gray-500 mb-1">Min. Followers</label>
+            <input
+              type="number"
+              placeholder="0"
+              value={filters.minFollowers || ''}
+              onChange={(e) => updateFilter('minFollowers', parseInt(e.target.value) || 0)}
+              className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black"
+            />
+          </div>
         </div>
 
-        <div className="md:col-span-2 flex items-end">
+        {/* Reset Button */}
+        <div className="flex justify-end pt-2">
           <button
             onClick={() => {
-              setFilters({ search: '', location: '', topics: [], platform: '', minFollowers: 0 })
-              onFilterChange({ search: '', location: '', topics: [], platform: '', minFollowers: 0 })
+              const resetState = { search: '', locations: [], topics: [], platforms: [], minFollowers: 0 };
+              setFilters(resetState)
+              onFilterChange(resetState)
             }}
-            className="w-full px-4 py-2 border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50 hover:text-black transition-colors text-sm font-medium"
+            className="px-4 py-2 text-sm text-gray-600 hover:text-black transition-colors font-medium"
           >
-            Reset
+            Reset Filters
           </button>
-        </div>
-
-        <div className="md:col-span-12 border-t border-gray-100 pt-4 mt-2">
-          <div className="flex items-center justify-between mb-2 cursor-pointer" onClick={() => setIsTopicsExpanded(!isTopicsExpanded)}>
-            <label className="block text-xs font-medium text-gray-500">Topics</label>
-            <button className="text-xs text-gray-400 hover:text-gray-600 flex items-center gap-1">
-              {isTopicsExpanded ? 'Show Less' : 'Show All'}
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className={`w-4 h-4 transition-transform ${isTopicsExpanded ? 'rotate-180' : ''}`}>
-                <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
-              </svg>
-            </button>
-          </div>
-          <div className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 ${isTopicsExpanded ? '' : 'max-h-24 overflow-hidden relative'}`}>
-            {AVAILABLE_TOPICS.map((topic) => (
-              <label key={topic} className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:text-black">
-                <input
-                  type="checkbox"
-                  checked={filters.topics.includes(topic)}
-                  onChange={() => toggleTopic(topic)}
-                  className="rounded border-gray-300 text-black focus:ring-black"
-                />
-                <span className="truncate">{topic}</span>
-              </label>
-            ))}
-            {!isTopicsExpanded && (
-              <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white to-transparent pointer-events-none" />
-            )}
-          </div>
         </div>
       </div>
     </div>

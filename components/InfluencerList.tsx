@@ -27,9 +27,9 @@ export function InfluencerList({ influencers }: { influencers: Influencer[] }) {
       )
     }
 
-    if (filters.location) {
+    if (filters.locations && filters.locations.length > 0) {
       filtered = filtered.filter((inf) =>
-        inf.location.includes(filters.location)
+        filters.locations.some((loc: string) => inf.location.includes(loc))
       )
     }
 
@@ -39,9 +39,9 @@ export function InfluencerList({ influencers }: { influencers: Influencer[] }) {
       )
     }
 
-    if (filters.platform) {
+    if (filters.platforms && filters.platforms.length > 0) {
       filtered = filtered.filter((inf) =>
-        inf.platform.includes(filters.platform)
+        inf.platform.some(p => filters.platforms.includes(p))
       )
     }
 
