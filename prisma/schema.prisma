@@ -1,0 +1,56 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String     @id @default(cuid())
+  email     String     @unique
+  password  String
+  name      String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  favorites Favorite[]
+}
+
+model Influencer {
+  id             String     @id @default(cuid())
+  externalId     String     @unique // Original ID from JSON (inf_001, etc.)
+  name           String
+  gender         String
+  age            Int
+  platform       String[]
+  followers      Int
+  engagementRate Float
+  avgLikes       Int
+  avgComments    Int
+  topics         String[]
+  location       String
+  imageUrl       String?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  favorites      Favorite[]
+
+  @@index([name])
+  @@index([location])
+}
+
+model Favorite {
+  id           String     @id @default(cuid())
+  userId       String
+  influencerId String
+  createdAt    DateTime   @default(now())
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  influencer   Influencer @relation(fields: [influencerId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, influencerId])
+  @@index([userId])
+}
+
