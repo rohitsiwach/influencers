@@ -33,6 +33,12 @@ export function InfluencerList({ influencers }: { influencers: Influencer[] }) {
       )
     }
 
+    if (filters.topics && filters.topics.length > 0) {
+      filtered = filtered.filter((inf) =>
+        inf.topics.some(topic => filters.topics.includes(topic))
+      )
+    }
+
     if (filters.platform) {
       filtered = filtered.filter((inf) =>
         inf.platform.includes(filters.platform)
