@@ -90,12 +90,15 @@ export function InfluencerFilters({ onFilterChange }: { onFilterChange: (filters
     platforms: [],
     minFollowers: 0,
   })
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false)
 
   const updateFilter = (key: keyof FilterState, value: any) => {
     const newFilters = { ...filters, [key]: value }
     setFilters(newFilters)
     onFilterChange(newFilters)
   }
+
+  const hasActiveFilters = filters.locations.length > 0 || filters.topics.length > 0 || filters.platforms.length > 0 || filters.minFollowers > 0;
 
   return (
     <div className="bg-white rounded-xl border shadow-sm p-4 mb-8">
@@ -117,54 +120,79 @@ export function InfluencerFilters({ onFilterChange }: { onFilterChange: (filters
           </div>
         </div>
         
-        {/* Filters Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <MultiSelect 
-            label="Location" 
-            options={AVAILABLE_LOCATIONS} 
-            selected={filters.locations} 
-            onChange={(val) => updateFilter('locations', val)} 
-          />
-
-          <MultiSelect 
-            label="Platform" 
-            options={AVAILABLE_PLATFORMS} 
-            selected={filters.platforms} 
-            onChange={(val) => updateFilter('platforms', val)} 
-          />
-
-          <MultiSelect 
-            label="Topics" 
-            options={AVAILABLE_TOPICS} 
-            selected={filters.topics} 
-            onChange={(val) => updateFilter('topics', val)} 
-          />
-
-          <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">Min. Followers</label>
-            <input
-              type="number"
-              placeholder="0"
-              value={filters.minFollowers || ''}
-              onChange={(e) => updateFilter('minFollowers', parseInt(e.target.value) || 0)}
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black"
-            />
-          </div>
-        </div>
-
-        {/* Reset Button */}
-        <div className="flex justify-end pt-2">
-          <button
-            onClick={() => {
-              const resetState = { search: '', locations: [], topics: [], platforms: [], minFollowers: 0 };
-              setFilters(resetState)
-              onFilterChange(resetState)
-            }}
-            className="px-4 py-2 text-sm text-gray-600 hover:text-black transition-colors font-medium"
+        {/* Toggle Button */}
+        <div className="flex justify-between items-center">
+          <button 
+            onClick={() => setIsFiltersOpen(!isFiltersOpen)}
+            className="text-sm font-medium text-gray-600 hover:text-black flex items-center gap-1"
           >
-            Reset Filters
+            {isFiltersOpen ? (
+              <>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+                  <path fillRule="evenodd" d="M14.77 12.79a.75.75 0 01-1.06-.02L10 8.832 6.29 12.77a.75.75 0 11-1.08-1.04l4.25-4.5a.75.75 0 011.08 0l4.25 4.5a.75.75 0 01.02 1.06z" clipRule="evenodd" />
+                </svg>
+                Less Filters
+              </>
+            ) : (
+              <>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+                  <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
+                </svg>
+                More Filters
+              </>
+            )}
           </button>
+
+          {hasActiveFilters && (
+            <button
+              onClick={() => {
+                const resetState = { search: filters.search, locations: [], topics: [], platforms: [], minFollowers: 0 };
+                setFilters(resetState)
+                onFilterChange(resetState)
+              }}
+              className="text-sm text-red-500 hover:text-red-700 font-medium"
+            >
+              Clear Filters
+            </button>
+          )}
         </div>
+
+        {/* Collapsible Filters Grid */}
+        {isFiltersOpen && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2 border-t border-gray-100 animate-in slide-in-from-top-2 duration-200">
+            <MultiSelect 
+              label="Location" 
+              options={AVAILABLE_LOCATIONS} 
+              selected={filters.locations} 
+              onChange={(val) => updateFilter('locations', val)} 
+            />
+
+            <MultiSelect 
+              label="Platform" 
+              options={AVAILABLE_PLATFORMS} 
+              selected={filters.platforms} 
+              onChange={(val) => updateFilter('platforms', val)} 
+            />
+
+            <MultiSelect 
+              label="Topics" 
+              options={AVAILABLE_TOPICS} 
+              selected={filters.topics} 
+              onChange={(val) => updateFilter('topics', val)} 
+            />
+
+            <div>
+              <label className="block text-xs font-medium text-gray-500 mb-1">Min. Followers</label>
+              <input
+                type="number"
+                placeholder="0"
+                value={filters.minFollowers || ''}
+                onChange={(e) => updateFilter('minFollowers', parseInt(e.target.value) || 0)}
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black"
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
