@@ -20,9 +20,9 @@ A web application to browse influencer profiles and manage favorites.
 2.  **Set up environment variables:**
     Create a `.env` file with:
     ```env
-    DATABASE_URL="your_prisma_accelerate_url"
-    NEXTAUTH_SECRET="your_secret"
-    NEXTAUTH_URL="http://localhost:3000"
+    DATABASE_URL="*****************"
+    NEXTAUTH_SECRET="**************"
+    NEXTAUTH_URL="*****************"
     ```
 
 3.  **Run the development server:**
