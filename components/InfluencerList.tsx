@@ -108,7 +108,7 @@ export function InfluencerList({ influencers }: { influencers: Influencer[] }) {
                 </div>
                 <Link 
                   href={`/influencers/${inf.id}`} 
-                  className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-black hover:bg-gray-800 transition-colors"
+                  className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90 transition-colors shadow-sm shadow-primary/20"
                 >
                   View Profile
                 </Link>

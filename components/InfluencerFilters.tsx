@@ -53,7 +53,7 @@ function MultiSelect({ label, options, selected, onChange }: { label: string, op
       <label className="block text-xs font-medium text-gray-500 mb-1">{label}</label>
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full px-3 py-2 text-left border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black bg-white flex justify-between items-center"
+        className="w-full px-3 py-2.5 text-left border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white flex justify-between items-center min-h-[44px]"
       >
         <span className="truncate text-sm block mr-2">
           {selected.length === 0 ? 'All' : `${selected.length} selected`}
@@ -66,12 +66,12 @@ function MultiSelect({ label, options, selected, onChange }: { label: string, op
       {isOpen && (
         <div className="absolute z-20 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
           {options.map(option => (
-            <label key={option} className="flex items-center px-3 py-2 hover:bg-gray-50 cursor-pointer">
+            <label key={option} className="flex items-center px-3 py-3 hover:bg-gray-50 cursor-pointer min-h-[44px]">
               <input
                 type="checkbox"
                 checked={selected.includes(option)}
                 onChange={() => toggleOption(option)}
-                className="rounded border-gray-300 text-black focus:ring-black mr-2"
+                className="rounded border-gray-300 text-primary focus:ring-primary mr-3 w-5 h-5"
               />
               <span className="text-sm text-gray-700">{option}</span>
             </label>
@@ -115,7 +115,7 @@ export function InfluencerFilters({ onFilterChange }: { onFilterChange: (filters
               placeholder="Find influencers..."
               value={filters.search}
               onChange={(e) => updateFilter('search', e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-colors"
+              className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors min-h-[44px]"
             />
           </div>
         </div>
@@ -124,7 +124,7 @@ export function InfluencerFilters({ onFilterChange }: { onFilterChange: (filters
         <div className="flex justify-between items-center">
           <button 
             onClick={() => setIsFiltersOpen(!isFiltersOpen)}
-            className="text-sm font-medium text-gray-600 hover:text-black flex items-center gap-1"
+            className="text-sm font-medium text-gray-600 hover:text-primary flex items-center gap-1 py-2"
           >
             {isFiltersOpen ? (
               <>
@@ -150,7 +150,7 @@ export function InfluencerFilters({ onFilterChange }: { onFilterChange: (filters
                 setFilters(resetState)
                 onFilterChange(resetState)
               }}
-              className="text-sm text-red-500 hover:text-red-700 font-medium"
+              className="text-sm text-red-500 hover:text-red-700 font-medium py-2"
             >
               Clear Filters
             </button>
@@ -188,7 +188,7 @@ export function InfluencerFilters({ onFilterChange }: { onFilterChange: (filters
                 placeholder="0"
                 value={filters.minFollowers || ''}
                 onChange={(e) => updateFilter('minFollowers', parseInt(e.target.value) || 0)}
-                className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black"
+                className="w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary min-h-[44px]"
               />
             </div>
           </div>
