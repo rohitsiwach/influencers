@@ -10,7 +10,7 @@ export function Navbar({ session }: { session: Session | null }) {
     <nav className="sticky top-0 z-50 w-full border-b bg-white/80 backdrop-blur-md supports-[backdrop-filter]:bg-white/60">
       <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
         <div className="flex items-center gap-8">
-          <Link href="/" className="text-xl font-bold tracking-tight text-primary hover:opacity-80 transition-opacity">
+          <Link href="/" className="text-2xl font-bold tracking-tight bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent hover:opacity-80 transition-opacity">
             addfame
           </Link>
           {session?.user && (
@@ -38,7 +38,7 @@ export function Navbar({ session }: { session: Session | null }) {
                 </Link>
                 <Link 
                   href="/register" 
-                  className="text-sm font-medium bg-primary text-white px-4 py-2 rounded-full hover:bg-primary/90 transition-colors shadow-sm shadow-primary/20"
+                  className="text-sm font-medium bg-gradient-to-r from-primary to-secondary text-white px-5 py-2 rounded-full hover:shadow-lg hover:shadow-primary/25 transition-all duration-300"
                 >
                   Sign up
                 </Link>
